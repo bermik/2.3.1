@@ -5,10 +5,13 @@ import hiber.model.User;
 import hiber.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 @Controller
@@ -36,8 +39,8 @@ public class UserController {
         return "redirect:/users";
     }
 
-    @GetMapping("user-delete/{id}")
-    public String deleteUser(@PathVariable("id") Long id) {
+    @DeleteMapping("user-delete/{id}")
+    public String deleteUser(@PathVariable("id") Long id, HttpServletResponse response) {
         userService.delete(id);
         return "redirect:/users";
     }
@@ -49,7 +52,7 @@ public class UserController {
         return "/user-edit";
     }
 
-    @PostMapping("/user-edit")
+    @PutMapping("/user-edit")
     public String editUser(User user) {
         userService.add(user);
         return "redirect:/users";

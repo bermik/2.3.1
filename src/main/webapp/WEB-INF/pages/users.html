@@ -21,7 +21,11 @@
         <td th:text="${user.getName()}"/>
         <td th:text="${user.getEmail()}"/>
         <td><a th:href="@{user-edit/{id}(id=${user.getId()})}">Edit</a></td>
-        <td><a th:href="@{user-delete/{id}(id=${user.getId()})}">Delete</a></td>
+        <td>
+            <form th:action="@{user-delete/{id}(id=${user.getId()})}" th:object="${user}" th:method="DELETE">
+                <button type="submit" onClick="return confirm('Are you sure?')">delete</button>
+            </form>
+        </td>
     </tr>
     </tbody>
 </table>

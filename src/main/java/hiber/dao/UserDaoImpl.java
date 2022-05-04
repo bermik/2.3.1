@@ -4,15 +4,17 @@ import hiber.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
+import javax.persistence.PersistenceContext;
 import java.util.List;
 
 @Repository
 @Component
 public class UserDaoImpl implements UserDao {
-    @Autowired
+    @PersistenceContext
     private EntityManager em;
 
     @Override
@@ -23,55 +25,22 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public void add(User user) {
-        EntityTransaction transaction = null;
-        try {
-            transaction = em.getTransaction();
-            transaction.begin();
-            if (user.getId() == null) {
-                em.persist(user);
-            } else {
-                user = em.merge(user);
-            }
-            transaction.commit();
-        } catch (Exception e) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
-            e.printStackTrace();
+        if (user.getId() == null) {
+            em.persist(user);
+        } else {
+            user = em.merge(user);
         }
     }
 
     @Override
     public void delete(Long id) {
-        EntityTransaction transaction = null;
-        try {
-            transaction = em.getTransaction();
-            transaction.begin();
-            User user = em.find(User.class, id);
-            em.remove(em.contains(user) ? user : em.merge(user));
-            transaction.commit();
-        } catch (Exception e) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
-            e.printStackTrace();
-        }
+        User user = em.find(User.class, id);
+        em.remove(user);
     }
 
     @Override
     public void edit(User user) {
-        EntityTransaction transaction = null;
-        try {
-            transaction = em.getTransaction();
-            transaction.begin();
-            em.merge(user);
-            transaction.commit();
-        } catch (Exception e) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
-            e.printStackTrace();
-        }
+        em.merge(user);
     }
 
     @Override
